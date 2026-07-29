@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Donor Around Me</title>
+
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <!-- LOADING SPINNER -->
+    <div id="globalSpinner" class="spinner-overlay">
+        <div class="spinner"></div>
+        <p data-i18n="loading">Loading...</p>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="toast-container-custom"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="authScreen" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <i class="fas fa-droplet"></i>
+                <h1>Blood<span>Donor</span></h1>
+            </div>
+            <p class="auth-subtitle" data-i18n="authSubtitle">Please sign in to access the full Blood Donor Around Me experience.</p>
+            <form id="loginForm" novalidate>
+                <div class="mb-3">
+                    <label class="form-label" for="loginName" data-i18n="authName">Name</label>
+                    <input type="text" class="form-control" id="loginName" data-i18n-placeholder="authPlaceholderName" placeholder="Enter your full name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="loginEmail" data-i18n="authEmail">Email Address</label>
+                    <input type="email" class="form-control" id="loginEmail" data-i18n-placeholder="authPlaceholderEmail" placeholder="Enter your email address" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="loginPassword" data-i18n="authPassword">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="loginPassword" data-i18n-placeholder="authPlaceholderPassword" placeholder="Enter your password" required>
+                        <button type="button" class="btn-toggle-pwd" id="togglePassword" tabindex="-1" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary-custom btn-login" data-i18n="authLogin">Login</button>
+            </form>
+            <div class="auth-footer">
+                <span data-i18n="authHint">Use your details to enter the platform before the main website opens.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav" style="display:none;">
+        <div class="container">
+            <a class="navbar-brand" href="#" data-i18n-html="brandName">
+                <i class="fas fa-droplet"></i>Blood<span>Donor</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+                    <li class="nav-item"><a class="nav-link active" href="#home"><i class="fas fa-home"></i><span data-i18n="navHome">Home</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#bloodGroups"><i class="fas fa-tint"></i><span data-i18n="navBloodGroups">Blood Groups</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#events"><i class="fas fa-calendar-check"></i><span data-i18n="navEvents">Events</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dashboard"><i class="fas fa-chart-pie"></i><span data-i18n="navDashboard">Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#emergency"><i class="fas fa-ambulance text-danger"></i><span data-i18n="navEmergency">Emergency</span></a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=E63946&color=fff&size=40" alt="Avatar" class="avatar-nav">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#profile"><i class="fas fa-user"></i><span data-i18n="navProfile">Profile</span></a></li>
+                            <li><a class="dropdown-item" href="#settings"><i class="fas fa-cog"></i><span data-i18n="navSettings">Settings</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span data-i18n="navLogout">Logout</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <div class="lang-switcher" aria-label="Language switcher">
+                            <button type="button" class="lang-btn active" data-lang="en">EN</button>
+                            <button type="button" class="lang-btn" data-lang="te">TEL</button>
+                            <button type="button" class="lang-btn" data-lang="hi">हिं</button>
+                        </div>
+                    </li>
+                    <li class="nav-item ms-1">
+                        <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" data-i18n-title="toggleTheme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="appContent" style="display:none;">
+
+        <!-- HERO SECTION -->
+        <section id="home" class="hero-section">
+            <div class="container">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <div class="hero-badge" data-i18n="heroBadge">
+                            <i class="fas fa-heartbeat me-1"></i> Save Lives Today
+                        </div>
+                        <h1 class="hero-title" data-i18n-html="heroTitle">
+                            Donate Blood, <br><span>Save a Life</span>
+                        </h1>
+                        <p class="hero-desc" data-i18n="heroDesc">
+                            Join thousands of donors who are making a difference.
+                            Find nearby blood donors, donation camps, and emergency
+                            blood requests — all in one place.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#searchDonor" class="btn btn-primary-custom">
+                                <i class="fas fa-search me-2"></i><span data-i18n="heroFindDonor">Find a Donor</span>
+                            </a>
+                            <a href="#register" class="btn btn-outline-primary-custom">
+                                <i class="fas fa-user-plus me-2"></i><span data-i18n="heroRegisterDonor">Register as Donor</span>
+                            </a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <h3 id="totalDonorsStat">2,847</h3>
+                                <p data-i18n="statDonors">Active Donors</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 id="totalCampsStat">126</h3>
+                                <p data-i18n="statCamps">Blood Camps</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3 id="totalLivesStat">4,521</h3>
+                                <p data-i18n="statLives">Lives Saved</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <div class="hero-image">
+                            <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=800&h=500&fit=crop&crop=center&auto=format" alt="Blood Donation" class="img-fluid">
+                            <div class="floating-card">
+                                <i class="fas fa-heart-circle-check"></i>
+                                <div class="fc-text">
+                                    Urgent Need
+                                    <small>O- required at Apollo Hospital</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEARCH DONOR SECTION -->
+        <section id="searchDonor" class="search-section">
+            <div class="container">
+                <div class="text-center mb-4" data-aos="fade-up">
+                    <h2 class="section-title" data-i18n-html="searchTitle">Find a <span>Blood Donor</span></h2>
+                    <p class="section-subtitle" data-i18n="searchSubtitle">Search for donors based on blood group, location, and availability.</p>
+                </div>
+                <div class="search-card" data-aos="fade-up" data-aos-delay="100">
+                    <form id="searchDonorForm" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label fw-600" data-i18n="searchLabelBloodGroup">Blood Group</label>
+                            <select class="form-select" id="searchBloodGroup">
+                                <option value="" data-i18n="selectAllGroups">All Groups</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-600" data-i18n="searchLabelState">State</label>
+                            <input type="text" class="form-control" id="searchState" data-i18n-placeholder="searchPlaceholderState" placeholder="e.g. Andhra Pradesh">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-600" data-i18n="searchLabelCity">City</label>
+                            <input type="text" class="form-control" id="searchCity" data-i18n-placeholder="searchPlaceholderCity" placeholder="e.g. Vijayawada">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-600" data-i18n="searchLabelAvailability">Availability</label>
+                            <select class="form-select" id="searchAvailability">
+                                <option value="" data-i18n="searchSelectAny">Any</option>
+                                <option value="available" data-i18n="selectAvailable">Available</option>
+                                <option value="unavailable" data-i18n="selectUnavailable">Unavailable</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary-custom btn-search w-100">
+                                <i class="fas fa-search me-2"></i><span data-i18n="searchButton">Search</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="searchResults" class="mt-4" style="display:none;">
+                    <h5 class="fw-700 mb-3"><span id="resultCount">0</span> <span data-i18n="resultCountLabel">donors found</span></h5>
+                    <div id="donorResultsGrid" class="donor-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOOD GROUPS SECTION -->
+        <section id="bloodGroups" class="blood-groups-section">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title" data-i18n-html="bloodGroupsTitle">Blood <span>Groups</span></h2>
+                    <p class="section-subtitle" data-i18n="bloodGroupsSubtitle">Browse donors by blood group. Click on any group to view available donors.</p>
+                </div>
+                <div class="row g-4" id="bloodGroupsGrid"></div>
+            </div>
+        </section>
+
+        <!-- EVENTS SECTION -->
+        <section id="events" class="events-section">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title" data-i18n-html="eventsTitle">Upcoming <span>Blood Donation Camps</span></h2>
+                    <p class="section-subtitle" data-i18n="eventsSubtitle">Find and register for blood donation camps near you.</p>
+                </div>
+                <div class="row g-4" id="eventsGrid"></div>
+            </div>
+        </section>
+
+        <!-- SUCCESS STORIES -->
+        <section id="stories" class="stories-section">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title" data-i18n-html="storiesTitle">Success <span>Stories</span></h2>
+                    <p class="section-subtitle" data-i18n="storiesSubtitle">Real stories of lives saved through blood donation.</p>
+                </div>
+                <div class="row g-4" id="storiesGrid"></div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="dashboard-wrapper" style="display:none;">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div class="dash-sidebar" data-aos="fade-right">
+                            <div class="dash-user">
+                                <img src="https://ui-avatars.com/api/?name=Aarav+Sharma&background=E63946&color=fff&size=80" alt="User">
+                                <h5 id="dashUserName">Aarav Sharma</h5>
+                                <p><i class="fas fa-tint me-1"></i> <span id="dashUserBlood">A+</span></p>
+                            </div>
+                            <ul class="dash-nav">
+                                <li><a href="#" class="active" data-dash="overview"><i class="fas fa-th-large"></i><span data-i18n="dashboardOverview">Overview</span></a></li>
+                                <li><a href="#" data-dash="donations"><i class="fas fa-history"></i><span data-i18n="dashboardDonationHistory">Donation History</span></a></li>
+                                <li><a href="#" data-dash="events"><i class="fas fa-calendar"></i><span data-i18n="dashboardMyEvents">My Events</span></a></li>
+                                <li><a href="#" data-dash="requests"><i class="fas fa-inbox"></i><span data-i18n="dashboardBloodRequests">Blood Requests</span></a></li>
+                                <li><a href="#" data-dash="notifications"><i class="fas fa-bell"></i><span data-i18n="dashboardNotifications">Notifications</span> <span class="badge bg-danger rounded-pill ms-1">3</span></a></li>
+                                <li><a href="#" data-dash="achievements"><i class="fas fa-trophy"></i><span data-i18n="dashboardAchievements">Achievements</span></a></li>
+                                <li><a href="#" data-dash="profile"><i class="fas fa-user-edit"></i><span data-i18n="dashboardEditProfile">Edit Profile</span></a></li>
+                                <li><a href="#" data-dash="certificates"><i class="fas fa-certificate"></i><span data-i18n="dashboardCertificates">Certificates</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="dash-content" id="dashContent">
+                            <div id="dashOverview">
+                                <div class="dash-stats">
+                                    <div class="stat-box"><div class="stat-icon"><i class="fas fa-tint"></i></div><div class="stat-number">12</div><div class="stat-label" data-i18n="dashboardStatDonations">Total Donations</div></div>
+                                    <div class="stat-box"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-number">3</div><div class="stat-label" data-i18n="dashboardStatEvents">Upcoming Events</div></div>
+                                    <div class="stat-box"><div class="stat-icon"><i class="fas fa-inbox"></i></div><div class="stat-number">2</div><div class="stat-label" data-i18n="dashboardStatRequests">Pending Requests</div></div>
+                                    <div class="stat-box"><div class="stat-icon"><i class="fas fa-star"></i></div><div class="stat-number">850</div><div class="stat-label" data-i18n="dashboardStatRewards">Reward Points</div></div>
+                                </div>
+                                <div class="dash-card">
+                                    <div class="dash-card-title"><i class="fas fa-clock text-primary-custom me-2"></i><span data-i18n="dashboardRecentActivity">Recent Activity</span></div>
+                                    <ul class="list-unstyled">
+                                        <li class="py-2 border-bottom"><i class="fas fa-check-circle text-success me-2"></i><span data-i18n="dashboardRecentDonation">You donated blood on 2026-06-15</span></li>
+                                        <li class="py-2 border-bottom"><i class="fas fa-calendar-plus text-primary-custom me-2"></i><span data-i18n="dashboardRegisteredCamp">Registered for 'Apollo Hospital Camp' on 2026-07-20</span></li>
+                                        <li class="py-2"><i class="fas fa-bell text-warning me-2"></i><span data-i18n="dashboardEmergencyRequest">Emergency request: O- needed at Nair Hospital</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="dashDonations" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">Donation History</h5><p class="text-muted">Your past donations will appear here.</p></div>
+                            </div>
+                            <div id="dashEvents" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">My Registered Events</h5><p class="text-muted">Events you have registered for.</p></div>
+                            </div>
+                            <div id="dashRequests" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">Blood Requests</h5><p class="text-muted">Requests you have submitted or received.</p></div>
+                            </div>
+                            <div id="dashNotifications" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">Notifications</h5><p class="text-muted">All your notifications.</p></div>
+                            </div>
+                            <div id="dashAchievements" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">Achievements &amp; Rewards</h5><p class="text-muted">Your badges and rewards.</p></div>
+                            </div>
+                            <div id="dashProfile" style="display:none;">
+                                <div class="dash-card">
+                                    <h5 class="fw-700">Edit Profile</h5>
+                                    <p class="text-muted">Update your personal information.</p>
+                                    <form id="profileEditForm">
+                                        <div class="row g-3">
+                                            <div class="col-md-6"><label class="form-label fw-600">Full Name</label><input type="text" class="form-control" value="Aarav Sharma"></div>
+                                            <div class="col-md-6"><label class="form-label fw-600">Email</label><input type="email" class="form-control" value="aarav@bloodlink.in"></div>
+                                            <div class="col-md-6"><label class="form-label fw-600">Phone</label><input type="text" class="form-control" value="+91 98765 43210"></div>
+                                            <div class="col-md-6"><label class="form-label fw-600">Blood Group</label><select class="form-select"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+                                            <div class="col-12"><label class="form-label fw-600">Address</label><input type="text" class="form-control" value="123 Marine Drive, Mumbai"></div>
+                                            <div class="col-12"><button type="submit" class="btn btn-primary-custom">Update Profile</button></div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="dashCertificates" style="display:none;">
+                                <div class="dash-card"><h5 class="fw-700">Certificates</h5><p class="text-muted">Your donation certificates.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EMERGENCY REQUEST -->
+        <section id="emergency" class="py-5" style="display:none; background:var(--gray-light);">
+            <div class="container">
+                <div class="text-center mb-4" data-aos="fade-up">
+                    <h2 class="section-title" data-i18n-html="emergencyTitle"><span>Emergency</span> Blood Request</h2>
+                    <p class="section-subtitle" data-i18n="emergencySubtitle">Submit an urgent blood request. Nearby donors will be notified immediately.</p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card-custom p-4" data-aos="fade-up">
+                            <form id="emergencyRequestForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="emergencyPatientName">Patient Name *</label><input type="text" class="form-control" required placeholder="Full name"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="emergencyHospital">Hospital *</label><input type="text" class="form-control" required placeholder="Hospital name"></div>
+                                    <div class="col-md-4"><label class="form-label fw-600" data-i18n="emergencyBloodGroup">Blood Group *</label><select class="form-select" required><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+                                    <div class="col-md-4"><label class="form-label fw-600" data-i18n="emergencyUnits">Units Required *</label><input type="number" class="form-control" required placeholder="1"></div>
+                                    <div class="col-md-4"><label class="form-label fw-600" data-i18n="emergencyUrgency">Urgency *</label><select class="form-select" required><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="emergencyContact">Contact Person *</label><input type="text" class="form-control" required placeholder="Name"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="emergencyPhone">Phone Number *</label><input type="tel" class="form-control" required placeholder="+91 98765 43210"></div>
+                                    <div class="col-12"><label class="form-label fw-600" data-i18n="emergencyLocation">Location *</label><input type="text" class="form-control" required placeholder="Hospital address or GPS location"></div>
+                                    <div class="col-12"><label class="form-label fw-600" data-i18n="emergencyDescription">Description</label><textarea class="form-control" rows="3" placeholder="Additional details..."></textarea></div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-danger btn-lg w-100 rounded-5">
+                                            <i class="fas fa-ambulance me-2"></i><span data-i18n="emergencySubmit">Submit Emergency Request</span>
+                                        </button>
+                                        <small class="text-muted d-block mt-2"><i class="fas fa-info-circle me-1"></i><span data-i18n="emergencyNote">Nearby matching donors will receive an instant notification.</span></small>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE PAGE -->
+        <section id="profile" class="py-5" style="display:none; background:var(--gray-light);">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card-custom p-4" data-aos="fade-up">
+                            <h3 class="fw-800 mb-4"><i class="fas fa-user-circle text-primary-custom me-2"></i><span data-i18n="profileTitle">My Profile</span></h3>
+                            <div class="text-center mb-4">
+                                <div class="profile-avatar-upload">
+                                    <img src="https://ui-avatars.com/api/?name=Aarav+Sharma&background=E63946&color=fff&size=140" alt="Profile" class="profile-avatar" id="profileAvatar">
+                                    <div class="upload-overlay">
+                                        <i class="fas fa-camera"></i>
+                                        <input type="file" accept="image/*" id="profileImageUpload">
+                                    </div>
+                                </div>
+                                <h4 class="mt-3 fw-700">Aarav Sharma</h4>
+                                <p class="text-muted"><i class="fas fa-tint me-1 text-primary-custom"></i> A+ · Available</p>
+                            </div>
+                            <form id="profileUpdateForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileName">Full Name</label><input type="text" class="form-control" value="Aarav Sharma"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileEmail">Email</label><input type="email" class="form-control" value="aarav@bloodlink.in"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profilePhone">Phone</label><input type="text" class="form-control" value="+91 98765 43210"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileBloodGroup">Blood Group</label><select class="form-select"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option selected>O-</option></select></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileGender">Gender</label><select class="form-select"><option>Male</option><option>Female</option><option>Other</option></select></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileDob">Date of Birth</label><input type="date" class="form-control" value="1995-06-15"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileCity">City</label><input type="text" class="form-control" value="Vijayawada"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileState">State</label><input type="text" class="form-control" value="Andhra Pradesh"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profilePincode">Pincode</label><input type="text" class="form-control" value="520001"></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileAvailability">Availability</label><select class="form-select"><option value="available">Available</option><option value="unavailable">Unavailable</option></select></div>
+                                    <div class="col-md-6"><label class="form-label fw-600" data-i18n="profileLastDonation">Last Donation Date</label><input type="date" class="form-control" value="2026-06-15"></div>
+                                    <div class="col-12"><label class="form-label fw-600" data-i18n="profileAddress">Address</label><input type="text" class="form-control" value="123 MG Road, Vijayawada, Andhra Pradesh 520001"></div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary-custom" data-i18n="profileUpdate">Update Profile</button>
+                                        <button type="button" class="btn btn-outline-danger ms-2" id="deleteAccountBtn" data-i18n="profileDelete">Delete Account</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <hr class="my-4">
+                            <h5 class="fw-700"><i class="fas fa-key me-2"></i><span data-i18n="profileChangePassword">Change Password</span></h5>
+                            <form id="changePasswordForm" class="row g-3 mt-2">
+                                <div class="col-md-4"><input type="password" class="form-control" placeholder="Current Password" required></div>
+                                <div class="col-md-4"><input type="password" class="form-control" placeholder="New Password" required></div>
+                                <div class="col-md-4"><input type="password" class="form-control" placeholder="Confirm New Password" required></div>
+                                <div class="col-12"><button type="submit" class="btn btn-outline-primary-custom">Change Password</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer-custom">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="footer-brand"><i class="fas fa-droplet"></i>Blood<span>Donor</span></div>
+                        <p class="footer-desc" data-i18n="footerDesc">Connecting blood donors with those in need. Save lives, one donation at a time.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h5 data-i18n="footerQuickLinks">Quick Links</h5>
+                        <ul>
+                            <li><a href="#" data-i18n="footerFindDonor">Find a Donor</a></li>
+                            <li><a href="#" data-i18n="footerBloodGroups">Blood Groups</a></li>
+                            <li><a href="#" data-i18n="footerEvents">Events</a></li>
+                            <li><a href="#" data-i18n="footerEmergency">Emergency</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h5 data-i18n="footerResources">Resources</h5>
+                        <ul>
+                            <li><a href="#" data-i18n="footerFaqs">FAQs</a></li>
+                            <li><a href="#" data-i18n="footerBlog">Blog</a></li>
+                            <li><a href="#" data-i18n="footerPrivacy">Privacy Policy</a></li>
+                            <li><a href="#" data-i18n="footerTerms">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <h5 data-i18n="footerContactUs">Contact Us</h5>
+                        <ul>
+                            <li><i class="fas fa-envelope me-2 text-primary-custom"></i> support@blooddonor.com</li>
+                            <li><i class="fas fa-phone me-2 text-primary-custom"></i> +1 (800) 123-4567</li>
+                            <li><i class="fas fa-map-marker-alt me-2 text-primary-custom"></i> 123 Health Ave, CA</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    &copy; 2026 <strong>Blood Donor Around Me</strong>. <span data-i18n="footerRights">All rights reserved.</span> Made with <i class="fas fa-heart text-danger"></i> for a cause.
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- External Application Script -->
+    <script src="../script.js"></script>
+
+</body>
+</html>
